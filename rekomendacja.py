@@ -2,6 +2,7 @@
 #
 
 from math import sqrt
+import numpy
 
 users = {
         "Ania": 
@@ -49,10 +50,43 @@ def manhattan(rating1, rating2):
 
 def pearson(rating1, rating2):
     korelacja=0
-    
-    return korelacja
+    udaloSiePorownac=False
+    n= 0
+    sxy=0
+    sx=0
+    sy=0
+    sx2=0
+    sy2=0
+    for i in rating1.keys():
+        if i in rating2.keys():
+            udaloSiePorownac=True
+            sxy=sxy+rating1[i]*rating2[i]
+            sx=sx+rating1[i]
+            sy=sy+rating2[i]
+            sx2=sx2+pow(rating1[i],2)
+            sy2=sy2+pow(rating2[i],2)
+            n=n+1
+    korelacja=(sxy-(sx*sy)/n)/(sqrt(sx2-pow(sx,2)/n)*sqrt(sy2-pow(sy,2)/n))
+    if (udaloSiePorownac==True):
+        return korelacja
+    else:
+        return -1
 
 def pearsonNumpy(rating1, rating2):
     
     korelacja=0
+    udaloSiePorownac=False
+    X=[]
+    Y=[]
+
+    for i in rating1.keys():
+        if i in rating2.keys():
+            X.append(rating1[i])
+            Y.append(rating2[i])
+    korelacja=numpy.corrcoef(X,Y)
+
     return korelacja
+
+print "Wartość odległości manhattan dla preferncji Boni i Ani wynosi: " + str(manhattan(users["Bonia"],users["Ania"]))
+print "Wartość korelacji między preferencjami Boni i Ani, obliczona z przybliżonego wzoru na współczynnik koleracji Pearsona wynosi: "+ str(pearson(users["Bonia"],users["Ania"]))
+print "Korelacja obliczona dla preferencji Boni i Ani z numpy - funkcja corrcoef wynosi: " + str(pearsonNumpy(users["Bonia"],users["Ania"])[0][1])
